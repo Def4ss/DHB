@@ -3,34 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎂 С Днём Рождения, Дима!</title>
+<title>Birthday App</title>
+
 <style>
 body {
-  background:#0d1117;
-  color:#c9d1d9;
-  font-family:monospace;
-  white-space:pre-line;
   margin:0;
   height:100vh;
+  background:#0d1117;
+  color:#c9d1d9;
   display:flex;
-  flex-direction:column;
   justify-content:center;
   align-items:center;
-  padding:0 16px;
+  font-family:monospace;
+  flex-direction:column;
 }
+
 #startBtn {
-  background:#238636;
+  font-size:28px;
+  padding:16px 42px;
+  border-radius:12px;
   border:none;
-  padding:14px 32px;
+  background:#238636;
   color:white;
-  font-size:22px;
-  cursor:pointer;
-  border-radius:10px;
   font-weight:bold;
-  margin-bottom:24px;
 }
-#code {
-  width:100%;
+
+/* Кнопка по центру, но не нажимается */
+#startBtn:disabled {
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+#console {
+  display:none;
+  width:90%;
   max-width:600px;
   height:60vh;
   background:#161b22;
@@ -38,80 +44,67 @@ body {
   border-radius:8px;
   padding:16px;
   overflow:auto;
-  display:none;
+  white-space:pre-line;
 }
 </style>
 </head>
+<body>
 
-<button id="startBtn">▶ START</button>
-<div id="code"></div>
+<button id="startBtn" startBth>▶ START</button>
+<div id="console"></div>
 
-<!-- Звук Happy Birthday -->
-<audio id="music" src="music.mp3" loop></audio>
-<audio id="dingSound" src="pay.mp3"></audio>
+<audio id="music" src="music.mp3"></audio>
+<audio id="paySound" src="pay.mp3"></audio>
 
 <script>
+const startBtn = document.getElementById("startBtn");
+const consoleBox = document.getElementById("console");
 const music = document.getElementById("music");
-const ding = document.getElementById("dingSound");
-music.volume = 0.5;
-ding.volume = 0.6;
+const pay = document.getElementById("paySound");
 
-// Именинник и отправитель
-const birthdayBoy = "Дима";
-const sender = "Данил";
-
-const text = `
+let text = `
 // --------------------------------------------------
- // 🎂 С Днём Рождения, ${birthdayBoy} !
- // Открыт безотзывный кредитив от отправителя: ${sender}
- // --------------------------------------------------
-
- const name = "${birthdayBoy}";
- const from = "${sender}";
-
- function openCreditiv(holder) {
-     return {
-         type: "безотзывный",
-         limit: "365 дней без багов 🧑‍💻",
-         commission: "0%",
-         execute: () => console.log("Платёж счастья исполнен ✅")
-     };
- }
-
- const creditiv = openCreditiv(name);
- creditiv.execute();
- console.log("🎁 ${birthdayBoy}, твой баланс счастья пополнен!");
- console.log("С уважением и акцентом от ${sender} 😎");
- // Желаю тебе счастья и здоровья! 💚
+ // 🎂 С Днём Рождения, Дима!
+ // Кредитив открыт от: Данил))
+ // Выполняем оплату счастья...
+EXECUTING PAYMENT ✅
+🎁 Дима, баланс здоровья и счастья пополнен!
+ // Баги только в коде — не в жизни 💚
 `;
 
 let i = 0;
-const speed = 45;
-const box = document.getElementById("code");
+const speed = 40;
 
+// START запускает музыку и печатает код
 startBtn.addEventListener("click", () => {
-  document.getElementById("startBtn").style.display = "none";
-  box.style.display = "block";
-  music.play().catch(()=>{}); // запускаем музыку
+  startBtn.style.display = "none";
+  consoleBox.style.display = "block";
+  music.play().catch(()=>{});
   typeWriter();
 });
 
-function playDing() {
-  ding.currentTime = 0;
-  ding.play().catch(()=>{});
+function playPay() {
+  pay.currentTime = 0;
+  pay.play().catch(()=>{});
 }
 
 function typeWriter() {
   if (i < text.length) {
-    box.innerText = text.slice(0, i+1) + "█";
-    // при исполнении кредитива — звук банкомата
-    if (text.slice(0, i).includes("Платёж счастья исполнен")) playDing();
+    consoleBox.innerText = text.slice(0, i+1) + "█";
+    if (consoleBox.innerText.includes("EXECUTING PAYMENT")) playPay();
     i++;
     setTimeout(typeWriter, speed);
   } else {
-    box.innerText = text;
-    playDing();
+    consoleBox.innerText = text;
+    playPay();
   }
 }
+
+// Сообщаем Телеграму, что приложение готово
+if (window.Telegram?.WebApp) {
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+}
 </script>
+</body>
 </html>
