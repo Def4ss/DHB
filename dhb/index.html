@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎂 С Днём Рождения, Программист!</title>
 <style>
 body {
@@ -46,23 +46,23 @@ body {
 <button id="startBtn">▶ START</button>
 <div id="code"></div>
 
-<!-- Реальные звуки -->
-<audio id="keySound" src="https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3"></audio>
-<audio id="dingSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+<!-- Звук Happy Birthday -->
+<audio id="music" src="music.mp3" loop></audio>
+<audio id="dingSound" src="pay.mp3"></audio>
 
 <script>
-const key = document.getElementById("keySound");
+const music = document.getElementById("music");
 const ding = document.getElementById("dingSound");
-key.volume = 0.35;
-ding.volume = 0.55;
+music.volume = 0.5;
+ding.volume = 0.6;
 
-// ✅ Переписали: 2 имени
-const birthdayBoy = "Дима";     // именинник
-const sender = "Данил";         // поздравитель
+// Именинник и отправитель
+const birthdayBoy = "Дима";
+const sender = "Данил";
 
 const text = `
 // --------------------------------------------------
- // 🎂 С Днём Рождения, ${birthdayBoy}!
+ // 🎂 С Днём Рождения, ${birthdayBoy} джан!
  // Открыт безотзывный кредитив от отправителя: ${sender}
  // --------------------------------------------------
 
@@ -82,39 +82,35 @@ const text = `
  creditiv.execute();
  console.log("🎁 ${birthdayBoy}, твой баланс счастья пополнен!");
  console.log("С уважением и акцентом от ${sender} 😎");
- // Баги только в коде — не в жизни 💚
+ // Желаю тебе счастья и здоровья! 💚
 `;
 
 let i = 0;
 const speed = 45;
 const box = document.getElementById("code");
 
-// Разблокировка звука + старт печати
 startBtn.addEventListener("click", () => {
   document.getElementById("startBtn").style.display = "none";
   box.style.display = "block";
-  type();
+  music.play().catch(()=>{}); // запускаем музыку
+  typeWriter();
 });
 
-function playKey() {
-  key.currentTime = 0;
-  key.play().catch(()=>{});
-}
 function playDing() {
   ding.currentTime = 0;
   ding.play().catch(()=>{});
 }
 
-function type() {
+function typeWriter() {
   if (i < text.length) {
-     box.innerText = text.slice(0, i+1) + "█";
-     if (i % 2 === 0) playKey();
-     if (text.slice(0, i).includes("Платёж счастья исполнен")) playDing();
-     i++;
-     setTimeout(type, speed);
+    box.innerText = text.slice(0, i+1) + "█";
+    // при исполнении кредитива — звук банкомата
+    if (text.slice(0, i).includes("Платёж счастья исполнен")) playDing();
+    i++;
+    setTimeout(typeWriter, speed);
   } else {
-     box.innerText = text;
-     playDing();
+    box.innerText = text;
+    playDing();
   }
 }
 </script>
